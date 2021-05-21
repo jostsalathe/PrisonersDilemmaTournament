@@ -1,4 +1,4 @@
-# titForTat except I randomly decide to be kind cooperate anyways
+# titForTat except I randomly decide to cooperate anyways
 import random
 
 def strategy(history, memory):
