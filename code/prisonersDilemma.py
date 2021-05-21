@@ -99,8 +99,8 @@ def runFullPairingTournament(inFolder, outFile):
     for pair in itertools.combinations(STRATEGY_LIST, r=2):
         roundHistory = runRound(pair)
         scoresA, scoresB = tallyRoundScores(roundHistory)
-        if pair[0] == "titForTat" or pair[1] == "titForTat":
-            outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+        # if pair[0] == "titForTat" or pair[1] == "titForTat":
+        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
         scoreKeeper[pair[0]] += scoresA
         scoreKeeper[pair[1]] += scoresB
         
