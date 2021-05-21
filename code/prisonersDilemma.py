@@ -4,11 +4,12 @@ import importlib
 import numpy as np
 import random
 
-STRATEGY_FOLDER = "exampleStrats"
+STRATEGY_FOLDER = "myStrats"
 RESULTS_FILE = "results.txt"
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
-moveLabels = ["D","C"]
+# moveLabels = ["D","C"]
+moveLabels = ["-","+"]
 # D = defect,     betray,       sabotage,  free-ride,     etc.
 # C = cooperate,  stay silent,  comply,    upload files,  etc.
 
@@ -41,7 +42,7 @@ def runRound(pair):
     memoryA = None
     memoryB = None
     
-    LENGTH_OF_GAME = int(200-40*np.log(random.random())) # The games are a minimum of 200 turns long. The np.log here guarantees that every turn after the 200th has an equal (low) chance of being the final turn.
+    LENGTH_OF_GAME = int(200-40*np.log(random.random())) # The games are a minimum of 50 turns long. The np.log here guarantees that every turn after the 50th has an equal (low) chance of being the final turn.
     history = np.zeros((2,LENGTH_OF_GAME),dtype=int)
     
     for turn in range(LENGTH_OF_GAME):
@@ -96,7 +97,8 @@ def runFullPairingTournament(inFolder, outFile):
     for pair in itertools.combinations(STRATEGY_LIST, r=2):
         roundHistory = runRound(pair)
         scoresA, scoresB = tallyRoundScores(roundHistory)
-        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+        # if pair[0] == "Wibke_CarefullyOptimisticTitForTat" or pair[1] == "Wibke_CarefullyOptimisticTitForTat":
+        #     outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
         scoreKeeper[pair[0]] += scoresA
         scoreKeeper[pair[1]] += scoresB
         
@@ -110,7 +112,7 @@ def runFullPairingTournament(inFolder, outFile):
         i = rankings[-1-rank]
         score = scoresNumpy[i]
         scorePer = score/(len(STRATEGY_LIST)-1)
-        f.write("#"+str(rank+1)+": "+pad(STRATEGY_LIST[i]+":",16)+' %.3f'%score+'  (%.3f'%scorePer+" average)\n")
+        f.write("#"+pad(str(rank+1),3)+": "+pad(STRATEGY_LIST[i]+":",64)+' %.3f'%score+'  (%.3f'%scorePer+" average)\n")
         
     f.flush()
     f.close()
