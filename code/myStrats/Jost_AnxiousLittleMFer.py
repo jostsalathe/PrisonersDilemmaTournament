@@ -1,7 +1,7 @@
 # We will cooperate repeatedly until our opponent betrays us too many times.
 # Then, we will get anxious and defect more likely until opponent cooperates, again.
 #
-# Memory represents anxiety and increases if CarefulAltruist has been wronged, and decreases if it hasn't.
+# Memory represents anxiety and increases if AnxiousLittleMFer has been wronged, and decreases if it hasn't.
 #
 
 import random
