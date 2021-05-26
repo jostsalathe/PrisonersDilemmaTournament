@@ -1,3 +1,8 @@
+# 
+# Usually does tit for tat but optimistically cooperates if it defected many times in a row.
+# This takes longer from try to try.
+# 
+
 def strategy(history, memory):
     coopInsteadThreshold = 1
     if memory != None:
@@ -22,7 +27,3 @@ def strategy(history, memory):
             coopInsteadThreshold += 1
     
     return choice, coopInsteadThreshold
-
-
-    # op: - + +   + +
-    # we: + - +  + +
