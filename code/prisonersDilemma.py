@@ -4,10 +4,11 @@ import importlib
 import numpy as np
 import random
 
-# STRATEGY_FOLDER = "myStrats"
-# STRATEGY_FOLDER = "exampleStrats"
-STRATEGY_FOLDER = "allStrats"
+# STRATEGY_FOLDER = ["allStrats"]
+STRATEGY_FOLDER = ["myStrats", "exampleStrats"]
 RESULTS_FILE = "results.txt"
+
+REPETITIONS = 100
 
 pointsArray = [[1,5],[0,3]] # The i-j-th element of this array is how many points you receive if you do play i, and your opponent does play j.
 # moveLabels = ["D","C"]
@@ -40,8 +41,8 @@ def strategyMove(move):
         return int(bool(move))
 
 def runRound(pair):
-    moduleA = importlib.import_module(STRATEGY_FOLDER+"."+pair[0])
-    moduleB = importlib.import_module(STRATEGY_FOLDER+"."+pair[1])
+    moduleA = importlib.import_module(pair[0])
+    moduleB = importlib.import_module(pair[1])
     memoryA = None
     memoryB = None
     
@@ -84,13 +85,14 @@ def pad(stri, leng):
         result = result+" "
     return result
     
-def runFullPairingTournament(inFolder, outFile):
-    print("Starting tournament, reading files from "+inFolder)
+def runFullPairingTournament(inFolders, outFile):
+    print("Starting tournament, reading files from "+str(inFolders))
     scoreKeeper = {}
     STRATEGY_LIST = []
-    for file in os.listdir(inFolder):
-        if file.endswith(".py"):
-            STRATEGY_LIST.append(file[:-3])
+    for folder in inFolders:
+        for file in os.listdir(folder):
+            if file.endswith(".py"):
+                STRATEGY_LIST.append(folder+"."+file[:-3])
             
             
     for strategy in STRATEGY_LIST:
@@ -98,12 +100,13 @@ def runFullPairingTournament(inFolder, outFile):
         
     f = open(outFile,"w+")
     for pair in itertools.combinations(STRATEGY_LIST, r=2):
-        roundHistory = runRound(pair)
-        scoresA, scoresB = tallyRoundScores(roundHistory)
-        # if pair[0] == "titForTat" or pair[1] == "titForTat":
-        outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
-        scoreKeeper[pair[0]] += scoresA
-        scoreKeeper[pair[1]] += scoresB
+        for i in range(REPETITIONS):
+            roundHistory = runRound(pair)
+            scoresA, scoresB = tallyRoundScores(roundHistory)
+            # if pair[0].count("Jost_UlfTheWulf") or pair[1].count("Jost_UlfTheWulf"):
+            #     outputRoundResults(f, pair, roundHistory, scoresA, scoresB)
+            scoreKeeper[pair[0]] += scoresA
+            scoreKeeper[pair[1]] += scoresB
         
     scoresNumpy = np.zeros(len(scoreKeeper))
     for i in range(len(STRATEGY_LIST)):
@@ -113,7 +116,7 @@ def runFullPairingTournament(inFolder, outFile):
     f.write("\n\nTOTAL SCORES\n")
     for rank in range(len(STRATEGY_LIST)):
         i = rankings[-1-rank]
-        score = scoresNumpy[i]
+        score = scoresNumpy[i]/REPETITIONS
         scorePer = score/(len(STRATEGY_LIST)-1)
         f.write("#"+pad(str(rank+1),3)+": "+pad(STRATEGY_LIST[i]+":",64)+' %.3f'%score+'  (%.3f'%scorePer+" average)\n")
         
